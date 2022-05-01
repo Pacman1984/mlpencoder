@@ -1,0 +1,2 @@
+# mlpencoder
+MLPEncoder is a sklearn based categorical feature encoding transformer. It similar to entity encoding with embeddings, but diown't take a embedding layer in the early satges of a mlp instead it takes the last layer to ancode the input.
