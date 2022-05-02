@@ -9,7 +9,7 @@ from scipy.special import expit as logistic_sigmoid
 
 class MLPEncoder(BaseEstimator, TransformerMixin):
     # initializer 
-    def __init__(self, task: str='classifiction', arch: List[int] = [60,40,20,10], activation: str='tanh') -> np.ndarray:
+    def __init__(self, task: str='classifiction', arch: List[int] = [60,40,20,10], activation: str='tanh') -> None:
         self.arch = arch
         self.task = task
         self.activation = activation
@@ -19,7 +19,7 @@ class MLPEncoder(BaseEstimator, TransformerMixin):
             self.model = MLPRegressor(hidden_layer_sizes=self.arch, max_iter=1000, early_stopping=True)
 
     # extract deepest hidden layer representations from input
-    def _deepest_layer(self, X, layer: int=0):
+    def _deepest_layer(self, X, layer: int=0) -> np.ndarray:
         L = np.matmul(X, self.model.coefs_[layer]) + self.model.intercepts_[layer]
         layer += 1
         if layer < len(self.model.hidden_layer_sizes):
@@ -29,21 +29,21 @@ class MLPEncoder(BaseEstimator, TransformerMixin):
                 L = logistic_sigmoid(L)
             elif self.activation == 'relu':
                 L = np.maximum(L, 0) 
-            elif self.activation == 'identity':
+            else:
                 L = L
             return self._deepest_layer(X=L, layer=layer)
         else:
             return L
 
     # fit function
-    def fit(self, X, y=None):
+    def fit(self, X, y=None) -> None:
         #FIT
         self.model.fit(X, y)
 
         return self
 
     # TRANSFORM
-    def transform(self, X):
+    def transform(self, X) -> np.ndarray:
         # extract deepest hidden layer representations from input
         L = self._deepest_layer(X)
 
